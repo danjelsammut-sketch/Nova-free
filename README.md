@@ -1,2 +1,2 @@
-# Nova-free
+index.html
 ai bot
