@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nova Free – AI that runs on your device</title>
+<style>
+:root{--bg:#fff;--sb:#f7f7f8;--tx:#1a1c21;--mu:#6b7280;--bd:#e5e7eb;--ac:#2557d6;--act:#fff;--hv:#eceef1;--us:#f1f3f6;--cd:#f6f7f9;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme=dark]{--bg:#16171b;--sb:#1c1d22;--tx:#e8e9ee;--mu:#9a9fab;--bd:#2c2e36;--hv:#2a2c34;--us:#25272f;--cd:#1f2026;color-scheme:dark}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{display:flex;background:var(--bg);color:var(--tx);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,select,input,dialog{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 10px}
+button,select{cursor:pointer}button:hover{background:var(--hv)}button.p{background:var(--ac);color:var(--act);border-color:var(--ac)}
+#side{width:250px;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:12px;gap:8px;flex:none}
+#side h1{font-size:17px;margin:2px 4px}#list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.ci{display:flex;align-items:center;gap:4px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:14px}.ci:hover,.ci.on{background:var(--hv)}.ci.on{font-weight:600}
+.ci span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ci i{font-style:normal;color:var(--mu);visibility:hidden}.ci:hover i{visibility:visible}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+header{display:flex;gap:6px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+header b{flex:1;min-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#menu{display:none}
+#stat{display:none;padding:7px 14px;font-size:13px;border-bottom:1px solid var(--bd);color:var(--mu)}#stat.err{color:#b42318}
+#log{flex:1;overflow-y:auto;padding:18px 16px}.w{max-width:780px;margin:0 auto}
+.m{margin:0 0 20px}.m.u{display:flex;justify-content:flex-end}.u .b{background:var(--us);padding:9px 14px;border-radius:14px;max-width:85%;white-space:pre-wrap}
+.b{overflow-wrap:anywhere;min-width:0}.b p{margin:.45em 0}.b h3,.b h4{margin:1em 0 .3em}.b ul,.b ol{margin:.4em 0;padding-left:1.4em}
+.b code{background:var(--cd);padding:1px 5px;border-radius:4px;font-size:.9em}
+.cb{margin:10px 0;border:1px solid var(--bd);border-radius:10px;overflow:hidden;background:var(--cd)}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd);background:var(--sb)}
+.ch button{font-size:12px;padding:2px 8px}.cb pre{margin:0;padding:10px 12px;overflow-x:auto}.cb code{background:none;padding:0;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.mu{font-size:12.5px;color:var(--mu)}
+#empty{text-align:center;padding-top:6vh}#empty h2{font-weight:600;margin:0 0 4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:22px;text-align:left}.grid button{padding:12px 14px;border-radius:12px;line-height:1.4}.grid small{display:block;color:var(--mu)}
+#comp{padding:8px 16px 14px}#box{border:1px solid var(--bd);border-radius:14px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+#row{display:flex;gap:6px;align-items:flex-end}
+textarea{border:0;outline:0;font:inherit;color:var(--tx);background:transparent;resize:none}#in{flex:1;padding:6px 4px;max-height:170px}
+#pan{width:48%;max-width:680px;border-left:1px solid var(--bd);display:none;flex-direction:column;flex:none;background:var(--bg)}#pan.on{display:flex}
+#ph{display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--bd);align-items:center}#ph b{flex:1}
+#fr{flex:1;border:0;width:100%;background:#fff}#cd{flex:1;width:100%;padding:10px;font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--cd);display:none}
+#er{display:none;padding:6px 10px;background:#fef3f2;color:#b42318;font-size:12.5px;border-top:1px solid var(--bd)}
+dialog{width:min(480px,92vw);padding:18px;border-radius:14px}dialog::backdrop{background:rgba(0,0,0,.35)}
+dialog label{display:block;margin:10px 0 3px;font-size:13px;color:var(--mu)}dialog input:not([type=color]),dialog textarea,dialog select{width:100%}dialog textarea{border:1px solid var(--bd);border-radius:8px;padding:6px 10px;height:70px}
+@media(max-width:760px){#side{position:fixed;z-index:9;top:0;bottom:0;left:0;transform:translateX(-100%);transition:transform .2s;padding-top:calc(12px + env(safe-area-inset-top,0px))}#side.open{transform:none;box-shadow:0 0 30px rgba(0,0,0,.25)}#menu{display:block}
+#pan.on{position:fixed;inset:0;width:100%;max-width:none;z-index:10;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}}
+</style></head><body>
+<aside id="side"><h1 id="nm">✦ Nova Free</h1><button class="p" id="new">+ New chat</button><div id="list"></div><button id="set">⚙ Settings</button></aside>
+<div id="main"><header><button id="menu">☰</button><b id="ttl">New chat</b>
+<select data-k="model" title="AI size"><option value="Qwen2.5-Coder-0.5B-Instruct-q4f16_1-MLC">Tiny – weakest devices</option><option value="Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC">Fast – recommended</option><option value="Qwen2.5-Coder-3B-Instruct-q4f16_1-MLC">Balanced</option><option value="Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC">Strong – needs a good GPU</option><option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">General chat</option></select>
+<button id="pb">◧ Preview</button><button id="exp">Export</button></header>
+<div id="stat"></div>
+<div id="log"><div class="w" id="msgs"></div></div>
+<div id="comp"><div class="w"><div id="box"><form id="f"><div id="row"><textarea id="in" rows="1" placeholder="Ask anything, or ask Nova to make a game…"></textarea><button class="p" id="go" type="submit">Send</button></div></form></div></div></div></div>
+<aside id="pan"><div id="ph"><b>Game preview</b><button id="tg">Code</button><button id="rn" title="Reload">↻</button><button id="dl">Save</button><button id="x">✕</button></div>
+<iframe id="fr" sandbox="allow-scripts allow-pointer-lock allow-modals" title="Preview"></iframe><textarea id="cd" spellcheck="false"></textarea>
+<div id="er"><span id="et"></span> <button id="fx">Ask Nova to fix</button></div></aside>
+<dialog id="dlg"><b>Settings</b>
+<label>Assistant name</label><input data-k="name">
+<label>Custom instructions (always applied)</label><textarea data-k="inst" placeholder="e.g. Keep answers short, I’m a beginner…"></textarea>
+<label>Response style</label><select data-k="style"><option value="concise">Concise</option><option value="balanced">Balanced</option><option value="detailed">Detailed</option></select>
+<label>Theme</label><select data-k="theme"><option value="light">White</option><option value="dark">Dark</option></select>
+<label>Text size</label><select data-k="size"><option value="14">Small</option><option value="15">Medium</option><option value="17">Large</option></select>
+<label>Accent colour</label><input type="color" data-k="color">
+<p style="display:flex;gap:8px;margin:16px 0 0"><button id="rs">Delete all chats and data</button><button class="p" id="cl" style="margin-left:auto">Done</button></p></dialog>
+<script type="module">
+const WL="https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.87/+esm";
+const STY={concise:" Keep answers short.",balanced:"",detailed:" Be thorough and explain your reasoning."};
+const D={name:"Nova",inst:"",style:"balanced",color:"#2557d6",size:"15",theme:"light",model:"Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC"};
+const TPL=[["Make a game","Plays in the preview panel.","Make a fun arcade game: "],["Build an app","Tools, trackers, calculators.","Build a useful web app: "],["Explain code","Paste code to understand it.","Explain this code simply:\n"],["Write something","Emails, essays, ideas.","Write a clear, friendly message about: "]];
+const NOGPU="This browser or device can’t run the free AI (it needs WebGPU). Use the latest Chrome or Edge on a computer, or try the Tiny model.";
+const INJ='<script>addEventListener("error",e=>parent.postMessage({nova:e.message+" (line "+e.lineno+")"},"*"));const _e=console.error;console.error=(...a)=>{parent.postMessage({nova:a.join(" ")},"*");_e(...a)}<\/script>';
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+let S={chats:[],cur:null,set:{}},engine=null,loaded=null,wl=null,busy=false,f16=true,gpuOK=true,open=false,pt="pv",errs=[];
+try{S=Object.assign(S,JSON.parse(localStorage.getItem("nova-free")||"{}"))}catch(e){}
+S.set=Object.assign({},D,S.set);const P=()=>S.set,cur=()=>S.chats.find(c=>c.id===S.cur);
+const save=()=>{try{localStorage.setItem("nova-free",JSON.stringify(S))}catch(e){stat("Storage is full – delete old chats.",0,1)}};
+function stat(t,p,err){const s=$("stat");s.style.display=t?"block":"none";s.textContent=t||"";s.className=err?"err":"";s.style.background=p?"linear-gradient(90deg,var(--hv) "+Math.round(p*100)+"%,transparent 0)":"none"}
+function apply(){const s=P(),r=document.documentElement;r.dataset.theme=s.theme;r.style.setProperty("--ac",s.color);document.body.style.fontSize=s.size+"px";$("nm").textContent="✦ "+(s.name||"Nova")+" Free";
+ document.querySelectorAll("[data-k]").forEach(e=>{if(document.activeElement!==e)e.value=s[e.dataset.k]})}
+document.querySelectorAll("[data-k]").forEach(e=>e.addEventListener("input",()=>{P()[e.dataset.k]=e.value;apply();save()}));
+const gpuP=(async()=>{try{if(!navigator.gpu)throw 0;const a=await navigator.gpu.requestAdapter();if(!a)throw 0;f16=a.features.has("shader-f16")}catch(e){gpuOK=false;stat(NOGPU,0,1)}})();
+function newChat(){const c=cur();if(c&&!c.msgs.length)return;const n={id:Date.now().toString(36),title:"New chat",msgs:[],game:"",t:Date.now()};S.chats.unshift(n);S.cur=n.id;save();draw();pan()}
+function inline(s){return s.replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/(^|[\s(])\*([^*\n]+)\*/g,"$1<i>$2</i>")}
+function md(src){const bl=[];src=src.replace(/```([\w+-]*)\n?([\s\S]*?)(```|$)/g,(m,l,c)=>{bl.push([l,c.replace(/\n$/,"")]);return "\u0000"+(bl.length-1)+"\u0000"});
+ const o=[];let ls=null;const cl=()=>{if(ls){o.push("</"+ls+">");ls=null}};
+ for(const r of esc(src).split("\n")){let m;
+  if(m=r.match(/^\s*[-*]\s+(.*)/)){if(ls!=="ul"){cl();o.push("<ul>");ls="ul"}o.push("<li>"+inline(m[1])+"</li>")}
+  else if(m=r.match(/^\s*\d+[.)]\s+(.*)/)){if(ls!=="ol"){cl();o.push("<ol>");ls="ol"}o.push("<li>"+inline(m[1])+"</li>")}
+  else{cl();if(m=r.match(/^#{1,2}\s+(.*)/))o.push("<h3>"+inline(m[1])+"</h3>");else if(m=r.match(/^#{3,}\s+(.*)/))o.push("<h4>"+inline(m[1])+"</h4>");else if(r.trim())o.push("<p>"+inline(r)+"</p>")}}
+ cl();return o.join("").replace(/(?:<p>)?\u0000(\d+)\u0000(?:<\/p>)?/g,(m,i)=>{const[l,c]=bl[i];
+  return '<div class="cb"><div class="ch"><span>'+(l||"code")+'</span><button data-a="copy">Copy</button></div><pre><code>'+esc(c)+'</code></pre></div>'})}
+const body=m=>m.role==="user"?esc(m.text):(m.content?md(m.content):'<span class="mu">Thinking…</span>');
+function draw(){const c=cur()||(newChat(),cur());if(!c)return;$("ttl").textContent=c.title;$("list").innerHTML="";
+ for(const x of[...S.chats].sort((a,b)=>b.t-a.t)){const d=document.createElement("div");d.className="ci"+(x.id===S.cur?" on":"");d.innerHTML="<span>"+esc(x.title)+"</span><i title='Delete'>✕</i>";
+  d.onclick=e=>{if(busy)return;if(e.target.tagName==="I"){S.chats=S.chats.filter(y=>y.id!==x.id);if(S.cur===x.id)S.cur=(S.chats[0]||{}).id}else S.cur=x.id;save();draw();pan();$("side").classList.remove("open")};$("list").appendChild(d)}
+ const M=$("msgs");M.innerHTML="";
+ if(!c.msgs.length){M.innerHTML='<div id="empty"><h2>How can I help today?</h2><div class="mu">Runs privately on your device – no account needed. The first message downloads the AI once (about 0.5–5 GB depending on size).</div><div class="grid"></div></div>';
+  for(const[t,s,p]of TPL){const b=document.createElement("button");b.innerHTML="<b>"+t+"</b><small>"+s+"</small>";b.onclick=()=>{$("in").value=p;$("in").focus()};M.querySelector(".grid").appendChild(b)}}
+ for(const m of c.msgs){const d=document.createElement("div");d.className="m "+(m.role==="user"?"u":"a");d.innerHTML='<div class="b">'+body(m)+'</div>';M.appendChild(d)}
+ $("log").scrollTop=$("log").scrollHeight}
+function paint(a){const L=$("log"),near=L.scrollHeight-L.scrollTop-L.clientHeight<140,b=$("msgs").lastElementChild.querySelector(".b");b.innerHTML=body(a);if(near)L.scrollTop=L.scrollHeight}
+$("log").addEventListener("click",e=>{if(e.target.dataset.a==="copy"&&navigator.clipboard)navigator.clipboard.writeText(e.target.closest(".cb").querySelector("code").textContent).then(()=>{e.target.textContent="Copied";setTimeout(()=>e.target.textContent="Copy",1200)}).catch(()=>{})});
+// game workspace
+function pan(){const c=cur(),on=open&&!!c.game;$("pan").classList.toggle("on",on);if(!on)return;
+ $("fr").style.display=pt==="pv"?"block":"none";$("cd").style.display=pt==="code"?"block":"none";$("tg").textContent=pt==="pv"?"Code":"Preview";$("cd").value=c.game;
+ if(pt==="pv"){errs=[];$("er").style.display="none";$("fr").srcdoc=INJ+c.game}}
+$("tg").onclick=()=>{pt=pt==="pv"?"code":"pv";pan()};$("rn").onclick=()=>{pt="pv";pan()};$("x").onclick=()=>{open=false;pan()};
+$("pb").onclick=()=>{if(!cur().game){stat("No game yet – ask Nova to make one.",0,0);setTimeout(()=>stat(""),3000);return}open=!open;pan()};
+$("cd").oninput=e=>{cur().game=e.target.value;save()};
+const dl=(n,t)=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/html"}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
+$("dl").onclick=()=>dl("game.html",cur().game);
+addEventListener("message",e=>{if(e.source!==$("fr").contentWindow||!e.data||!e.data.nova)return;if(errs.length<5)errs.push(String(e.data.nova).slice(0,200));$("er").style.display="block";$("et").textContent=errs.length+" error(s): "+errs[0]});
+$("fx").onclick=()=>{$("in").value="The game shows these errors. Fix them and give the complete corrected game:\n"+errs.join("\n");send()};
+// AI
+async function ensure(){await gpuP;if(!gpuOK)throw new Error(NOGPU);
+ const id=f16?P().model:P().model.replace("q4f16_1","q4f32_1");if(engine&&loaded===id)return;
+ if(!wl)wl=await import(WL);if(engine){try{await engine.unload()}catch(e){}engine=null}
+ stat("Loading the AI… the first time this downloads the model.",0.01);
+ engine=await wl.CreateMLCEngine(id,{initProgressCallback:r=>stat(r.text||"Loading…",r.progress)});loaded=id;stat("")}
+function build(c,text){
+ let sy="You are "+(P().name||"Nova")+", a helpful AI assistant for work, coding and building games. Be clear and accurate."+STY[P().style]+" When asked for a game or app, reply with ONE complete self-contained HTML file in a single ```html code block (inline CSS and JS, canvas, keyboard and touch controls, score, restart), under 200 lines, then 2 short lines about the controls. For other code use fenced blocks with a language tag."+(P().inst?" User’s instructions: "+P().inst:"");
+ if(c.game&&/\b(change|add|fix|make|update|improve|remove|faster|slower|colou?r|bigger|smaller|speed|level)\b/i.test(text))sy+="\nThe current game file is below. Return the COMPLETE updated file in one ```html block.\n```html\n"+c.game.slice(0,6000)+"\n```";
+ const out=[];let n=sy.length;
+ for(const m of c.msgs.slice(0,-1).reverse()){const t=m.role==="user"?m.text:m.content.replace(/```html[\s\S]*?(```|$)/g,"[game code is in the workspace]");n+=t.length;if(n>7000&&out.length)break;out.unshift({role:m.role,content:t})}
+ while(out.length&&out[0].role!=="user")out.shift();return[{role:"system",content:sy},...out]}
+function grab(c,a){const m=a.content.match(/```html\s*\n([\s\S]*?)(```|$)/i)||a.content.match(/(<!DOCTYPE html[\s\S]*<\/html>)/i);if(m&&m[1].trim().length>80){c.game=m[1].trim();open=true;pt="pv";pan()}}
+async function send(){
+ const text=$("in").value.trim();if(busy||!text)return;const c=cur();
+ c.msgs.push({role:"user",text});if(c.title==="New chat")c.title=text.slice(0,42);c.t=Date.now();
+ const a={role:"assistant",content:""};c.msgs.push(a);$("in").value="";$("in").style.height="auto";busy=true;$("go").textContent="Stop";draw();
+ try{await ensure();const st=await engine.chat.completions.create({messages:build(c,text),stream:true,max_tokens:2500,temperature:.6});
+  for await(const ch of st){a.content+=(ch.choices[0]&&ch.choices[0].delta.content)||"";paint(a)}}
+ catch(e){stat("");a.content+=(a.content?"\n\n":"")+"Something went wrong: "+((e&&e.message)||e)}
+ busy=false;$("go").textContent="Send";grab(c,a);save();draw()}
+$("f").addEventListener("submit",e=>{e.preventDefault();if(busy){engine&&engine.interruptGenerate();return}send()});
+$("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();$("f").requestSubmit()}});
+$("in").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,170)+"px"});
+$("new").onclick=()=>{if(!busy){newChat();$("side").classList.remove("open")}};$("menu").onclick=()=>$("side").classList.toggle("open");
+$("set").onclick=()=>$("dlg").showModal();$("cl").onclick=()=>$("dlg").close();
+$("rs").onclick=e=>{if(e.target.dataset.s){S={chats:[],cur:null,set:{...D}};save();apply();draw();pan();e.target.textContent="Delete all chats and data";delete e.target.dataset.s;$("dlg").close()}else{e.target.dataset.s=1;e.target.textContent="Click again to confirm"}};
+$("exp").onclick=()=>{const c=cur();if(!c||!c.msgs.length)return;const n=P().name||"Nova";
+ const t="# "+c.title+"\n\n"+c.msgs.map(m=>"**"+(m.role==="user"?"You":n)+"**\n\n"+(m.role==="user"?m.text:m.content)).join("\n\n---\n\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/markdown"}));a.download="chat.md";a.click()};
+apply();draw();pan();
+</script></body></html>
