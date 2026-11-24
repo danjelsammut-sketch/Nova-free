@@ -1,0 +1,2 @@
+# Nova-free
+ai bot
